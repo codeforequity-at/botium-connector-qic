@@ -1,5 +1,5 @@
 module.exports.readCaps = () => {
-  // botium caps should come from env variable (.env) or botium.json. Priority is not defined if booth are filled
+  // botium caps should come from env variable (.env) or botium.json. Priority is not defined if both are filled
   let botiumJson
   try {
     botiumJson = require('./botium.json')
