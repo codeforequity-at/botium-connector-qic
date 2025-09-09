@@ -149,10 +149,11 @@ class BotiumConnectorQIC {
     } catch (error) {
       if (userSaysIndex !== this.userSaysIndex && error.message.includes('ResourceNotFoundException') && error.message.includes('not found under Session')) {
         debug(`NextMessage ${this.sessionId}, skipping reading new bot messages, new user message is arrived. (3)`)
+      } else {
+        debug('Error sending message to Q Connect:', error)
+        // setTimeout is not required anymore, because _getNextMessage is already async, does not block userSays?
+        setTimeout(() => this.queueBotSays(error), 0)
       }
-      debug('Error sending message to Q Connect:', error)
-      // setTimeout is not required anymore, because _getNextMessage is already async, does not block userSays?
-      setTimeout(() => this.queueBotSays(error), 0)
     }
   }
 
