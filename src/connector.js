@@ -144,7 +144,7 @@ class BotiumConnectorQIC {
 
       if (nextMessageResponse.nextMessageToken) {
         debug(`NextMessage ${this.sessionId}, chained response, next message token: ${nextMessageResponse.nextMessageToken}`)
-        this._getNextMessage(nextMessageResponse.nextMessageToken)
+        this._getNextMessage(nextMessageResponse.nextMessageToken, userSaysIndex)
       }
     } catch (error) {
       if (userSaysIndex !== this.userSaysIndex && error.message.includes('ResourceNotFoundException') && error.message.includes('not found under Session')) {
