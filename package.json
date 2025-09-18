@@ -1,6 +1,6 @@
 {
   "name": "botium-connector-qic",
-  "version": "1.0.0",
+  "version": "1.0.1",
   "description": "Botium Connector for Amazon Q in Connect",
   "main": "dist/botium-connector-qic-cjs.js",
   "module": "dist/botium-connector-qic-es.js",

@@ -27,6 +27,7 @@ class BotiumConnectorQIC {
     this.sessionId = null
     this.assistantId = null
     this.clientToken = null
+    this.userSaysIndex = 0
   }
 
   Validate () {
@@ -70,6 +71,8 @@ class BotiumConnectorQIC {
       throw new Error('Session not started.')
     }
 
+    this.userSaysIndex++
+    debug(`UserSays ${this.sessionId}, msg: ${JSON.stringify(msg)}`)
     const sendMessageCommand = new SendMessageCommand({
       assistantId: this.assistantId,
       sessionId: this.sessionId,
@@ -83,7 +86,7 @@ class BotiumConnectorQIC {
         }
       }
     })
-
+    debug(`UserSays ${this.sessionId}, request: ${JSON.stringify(sendMessageCommand)}`)
     if (!_.isNil(this.caps[Capabilities.QIC_GENERATE_FILLER_MESSAGE])) {
       sendMessageCommand.configuration = {
         generateFillerMessage: !!this.caps[Capabilities.QIC_GENERATE_FILLER_MESSAGE]
@@ -92,6 +95,7 @@ class BotiumConnectorQIC {
     let nextMessageToken
     try {
       const messageResponse = await this.qConnectClient.send(sendMessageCommand)
+      debug(`UserSays ${this.sessionId}, response: ${JSON.stringify(messageResponse)}`)
       nextMessageToken = messageResponse.nextMessageToken
     } catch (error) {
       debug('Error sending message to Q Connect:', error)
@@ -99,18 +103,16 @@ class BotiumConnectorQIC {
     }
 
     if (!nextMessageToken) {
-      debug('No nextMessageToken received')
-      throw new Error('No nextMessageToken received from Q Connect')
+      debug(`UserSays ${this.sessionId}, no nextMessageToken received`)
+    } else {
+      debug(`UserSays ${this.sessionId}, next message token: ${nextMessageToken}`)
+      this._getNextMessage(nextMessageToken, this.userSaysIndex)
     }
-
-    debug(`SendMessage token: ${nextMessageToken}`)
-
-    this._getNextMessage(nextMessageToken)
   }
 
-  async _getNextMessage (nextMessageToken) {
+  async _getNextMessage (nextMessageToken, userSaysIndex) {
     if (!this.sessionId) {
-      debug('Session not started, cannot get next message')
+      debug('NextMessage, session not started, cannot get next message')
       return
     }
     try {
@@ -119,8 +121,16 @@ class BotiumConnectorQIC {
         assistantId: this.assistantId,
         nextMessageToken
       })
+      if (userSaysIndex !== this.userSaysIndex) {
+        debug(`NextMessage ${this.sessionId}, skipping reading new bot messages, new user message is arrived (1)`)
+        return
+      }
       const nextMessageResponse = await this.qConnectClient.send(getNextMessageCommand)
-      debug(`Next message: ${JSON.stringify(nextMessageResponse)}`)
+      if (userSaysIndex !== this.userSaysIndex) {
+        debug(`NextMessage ${this.sessionId}, skipping reading new bot messages, new user message is arrived (2)`)
+        return
+      }
+      debug(`NextMessage ${this.sessionId}, next message: ${JSON.stringify(nextMessageResponse)}`)
 
       if (nextMessageResponse.response?.value?.text?.value) {
         const botMsg = {
@@ -133,13 +143,17 @@ class BotiumConnectorQIC {
       }
 
       if (nextMessageResponse.nextMessageToken) {
-        debug(`Chained response, next message token: ${nextMessageResponse.nextMessageToken}`)
-        this._getNextMessage(nextMessageResponse.nextMessageToken)
+        debug(`NextMessage ${this.sessionId}, chained response, next message token: ${nextMessageResponse.nextMessageToken}`)
+        this._getNextMessage(nextMessageResponse.nextMessageToken, userSaysIndex)
       }
     } catch (error) {
-      debug('Error sending message to Q Connect:', error)
-      // setTimeout is not required anymore, because _getNextMessage is already async, does not block userSays?
-      setTimeout(() => this.queueBotSays(error), 0)
+      if (userSaysIndex !== this.userSaysIndex && error.message.includes('ResourceNotFoundException') && error.message.includes('not found under Session')) {
+        debug(`NextMessage ${this.sessionId}, skipping reading new bot messages, new user message is arrived. (3)`)
+      } else {
+        debug('Error sending message to Q Connect:', error)
+        // setTimeout is not required anymore, because _getNextMessage is already async, does not block userSays?
+        setTimeout(() => this.queueBotSays(error), 0)
+      }
     }
   }
 

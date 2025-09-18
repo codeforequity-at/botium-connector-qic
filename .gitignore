@@ -63,4 +63,5 @@ typings/
 dist
 botium.local.json
 .idea
+.vscode
 test/nightly/botium.json
