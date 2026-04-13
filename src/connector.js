@@ -1,16 +1,18 @@
-const debug = require('debug')('botium-connector-qic')
-const _ = require('lodash')
-require('dotenv').config()
-const {
+import Debug from 'debug'
+import _ from 'lodash'
+import 'dotenv/config'
+import {
   QConnectClient,
   CreateSessionCommand,
   SendMessageCommand,
   GetNextMessageCommand,
   MessageType
-} = require('@aws-sdk/client-qconnect')
-const { v4: uuidv4 } = require('uuid')
+} from '@aws-sdk/client-qconnect'
+import { v4 as uuidv4 } from 'uuid'
 
-const Capabilities = require('./Capabilities')
+import Capabilities from './Capabilities.js'
+
+const debug = Debug('botium-connector-qic')
 
 const RequiredCapabilities = [
   Capabilities.QIC_ASSISTANT_ID,
@@ -168,4 +170,4 @@ class BotiumConnectorQIC {
   }
 }
 
-module.exports = BotiumConnectorQIC
+export default BotiumConnectorQIC

@@ -1,4 +1,4 @@
-module.exports = {
+const Capabilities = {
   QIC_ASSISTANT_ID: 'QIC_ASSISTANT_ID',
   QIC_AWS_REGION: 'QIC_AWS_REGION',
   QIC_AWS_ACCESS_KEY_ID: 'QIC_AWS_ACCESS_KEY_ID',
@@ -6,3 +6,5 @@ module.exports = {
   QIC_CLIENT_TOKEN: 'QIC_CLIENT_TOKEN',
   QIC_GENERATE_FILLER_MESSAGE: 'QIC_GENERATE_FILLER_MESSAGE'
 }
+
+export default Capabilities
