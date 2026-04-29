@@ -3,8 +3,14 @@
   "version": "1.0.2",
   "description": "Botium Connector for Amazon Q in Connect",
   "type": "module",
-  "main": "dist/botium-connector-qic-cjs.js",
+  "main": "dist/botium-connector-qic-cjs.cjs",
   "module": "dist/botium-connector-qic-es.js",
+  "exports": {
+    ".": {
+      "import": "./dist/botium-connector-qic-es.js",
+      "require": "./dist/botium-connector-qic-cjs.cjs"
+    }
+  },
   "scripts": {
     "build": "npm run eslint && rollup -c && cp logo.png dist",
     "eslint": "eslint index.js src/**/*.js",

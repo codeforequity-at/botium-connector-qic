@@ -21,7 +21,7 @@ export default {
       sourcemap: true
     },
     {
-      file: 'dist/botium-connector-qic-cjs.js',
+      file: 'dist/botium-connector-qic-cjs.cjs',
       format: 'cjs',
       exports: 'default',
       sourcemap: true
