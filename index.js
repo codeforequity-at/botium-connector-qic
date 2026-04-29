@@ -1,13 +1,17 @@
-const fs = require('fs')
-const path = require('path')
+import fs from 'fs'
+import path from 'path'
+import { fileURLToPath } from 'url'
 
-const PluginClass = require('./src/connector')
+import BotiumConnectorQIC from './src/connector.js'
+
+const __filename = fileURLToPath(import.meta.url)
+const __dirname = path.dirname(__filename)
 
 const logo = fs.readFileSync(path.join(__dirname, 'logo.png')).toString('base64')
 
-module.exports = {
+export default {
   PluginVersion: 1,
-  PluginClass: PluginClass,
+  PluginClass: BotiumConnectorQIC,
   PluginDesc: {
     name: 'Amazon Q Connect',
     avatar: logo,

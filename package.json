@@ -1,9 +1,16 @@
 {
   "name": "botium-connector-qic",
-  "version": "1.0.1",
+  "version": "1.0.2",
   "description": "Botium Connector for Amazon Q in Connect",
-  "main": "dist/botium-connector-qic-cjs.js",
+  "type": "module",
+  "main": "dist/botium-connector-qic-cjs.cjs",
   "module": "dist/botium-connector-qic-es.js",
+  "exports": {
+    ".": {
+      "import": "./dist/botium-connector-qic-es.js",
+      "require": "./dist/botium-connector-qic-cjs.cjs"
+    }
+  },
   "scripts": {
     "build": "npm run eslint && rollup -c && cp logo.png dist",
     "eslint": "eslint index.js src/**/*.js",
@@ -28,7 +35,6 @@
     "@babel/preset-env": "^7.12.13",
     "chai": "^4.3.7",
     "chai-as-promised": "^7.1.1",
-    "dotenv": "^16.0.3",
     "eslint": "^7.1.0",
     "eslint-config-standard": "^14.1.1",
     "eslint-plugin-import": "^2.20.2",
@@ -39,14 +45,13 @@
     "mocha": "^10.8.2",
     "rollup": "^2.38.5",
     "rollup-plugin-babel": "^4.4.0",
-    "rollup-plugin-commonjs": "^10.1.0",
-    "rollup-plugin-json": "^4.0.0",
-    "rollup-plugin-node-resolve": "^5.2.0"
+    "rollup-plugin-json": "^4.0.0"
   },
   "dependencies": {
     "@aws-sdk/client-qconnect": "^3.848.0",
     "@babel/runtime": "^7.12.13",
     "debug": "^4.3.7",
+    "dotenv": "^16.0.3",
     "lodash": "^4.17.21",
     "uuid": "^9.0.1"
   }

@@ -1,10 +1,12 @@
-require('dotenv').config()
-const assert = require('chai').assert
-const Connector = require('../../src/connector')
-const debug = require('debug')('botium-connector-qic-test')
-const _ = require('lodash')
+import 'dotenv/config'
+import { assert } from 'chai'
+import Debug from 'debug'
+import _ from 'lodash'
 
-const { readCaps } = require('./helper')
+import Connector from '../../src/connector.js'
+import { readCaps } from './helper.js'
+
+const debug = Debug('botium-connector-qic-test')
 
 describe('connector', function () {
   beforeEach(async function () {
